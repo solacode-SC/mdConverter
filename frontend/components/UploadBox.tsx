@@ -26,7 +26,12 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
     accept: {
       'application/pdf': ['.pdf'],
       'application/vnd.openxmlformats-officedocument.wordprocessingml.document': ['.docx'],
-      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx']
+      'application/vnd.openxmlformats-officedocument.presentationml.presentation': ['.pptx'],
+      'application/msword': ['.doc', '.docx'],
+      'application/vnd.ms-powerpoint': ['.ppt', '.pptx'],
+      'application/zip': ['.docx', '.pptx'],
+      'application/x-zip-compressed': ['.docx', '.pptx'],
+      'application/octet-stream': ['.doc', '.docx', '.ppt', '.pptx']
     },
     maxFiles: 1,
     maxSize: 10 * 1024 * 1024 // 10MB
@@ -72,7 +77,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
               <UploadCloud className="w-8 h-8 text-primary" />
             </div>
             <p className="text-xl font-semibold text-primary">Drag & drop your file here or click to upload</p>
-            <p className="text-muted">Supported formats: PDF, DOCX, PPTX</p>
+            <p className="text-muted">Supported formats: PDF, Word (.doc/.docx), PowerPoint (.ppt/.pptx)</p>
           </div>
         ) : (
           <div className="flex flex-col items-center text-center gap-4">

@@ -31,14 +31,14 @@ async def convert_file(file: UploadFile = File(...)):
         if filename.endswith(".pdf"):
             markdown_text = convert_pdf(content)
             out_name = file.filename.replace(".pdf", ".md")
-        elif filename.endswith(".docx"):
+        elif filename.endswith(".docx") or filename.endswith(".doc"):
             markdown_text = convert_docx(content)
-            out_name = file.filename.replace(".docx", ".md")
-        elif filename.endswith(".pptx"):
+            out_name = file.filename.rsplit(".", 1)[0] + ".md"
+        elif filename.endswith(".pptx") or filename.endswith(".ppt"):
             markdown_text = convert_pptx(content)
-            out_name = file.filename.replace(".pptx", ".md")
+            out_name = file.filename.rsplit(".", 1)[0] + ".md"
         else:
-            raise HTTPException(status_code=400, detail="Unsupported file format. Please upload PDF, DOCX, or PPTX.")
+            raise HTTPException(status_code=400, detail="Unsupported file format. Please upload PDF, Word, or PPT.")
     except Exception as e:
         raise HTTPException(status_code=500, detail=f"Conversion failed: {str(e)}")
 
