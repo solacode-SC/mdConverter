@@ -2,7 +2,7 @@
 
 import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
-import { UploadCloud, File, X, Loader2 } from 'lucide-react';
+import { UploadCloud, FileText, Presentation, File, X, Loader2, FileDown } from 'lucide-react';
 import { convertFile } from '@/lib/api';
 
 interface UploadBoxProps {
@@ -34,10 +34,11 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       'application/octet-stream': ['.doc', '.docx', '.ppt', '.pptx']
     },
     maxFiles: 1,
-    maxSize: 10 * 1024 * 1024 // 10MB
+    maxSize: 50 * 1024 * 1024 // 50MB
   });
 
-  const handleClear = () => {
+  const handleClear = (e?: React.MouseEvent) => {
+    if (e) e.stopPropagation();
     setFile(null);
     setError(null);
   };
@@ -56,80 +57,90 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
     }
   };
 
+  const getFileIcon = (filename: string) => {
+    const ext = filename.split('.').pop()?.toLowerCase();
+    if (ext === 'pdf') return <FileText className="w-5 h-5 text-brand-blue" />;
+    if (['ppt', 'pptx'].includes(ext || '')) return <Presentation className="w-5 h-5 text-brand-blue" />;
+    return <File className="w-5 h-5 text-brand-blue" />;
+  };
+
   return (
-    <div className="w-full flex flex-col items-center gap-6">
-      <div className="text-center">
-        <h2 className="text-3xl font-bold mb-2 text-primary">Convert to Markdown</h2>
-        <p className="text-muted text-lg">Convert PDF, Word & PowerPoint into clean Markdown instantly</p>
-      </div>
-
-      <div 
-        {...getRootProps()} 
-        className={`w-full max-w-2xl p-12 border-2 border-dashed rounded-[24px] bg-white transition-all duration-300 cursor-pointer flex flex-col items-center justify-center min-h-[300px]
-          ${isDragActive ? 'border-primary bg-gray-50' : 'border-border hover:border-gray-400 hover:bg-gray-50'}
-        `}
-      >
-        <input {...getInputProps()} />
-        
-        {!file ? (
-          <div className="flex flex-col items-center text-center gap-4">
-            <div className="w-16 h-16 rounded-full bg-gray-100 flex items-center justify-center mb-2">
-              <UploadCloud className="w-8 h-8 text-primary" />
-            </div>
-            <p className="text-xl font-semibold text-primary">Drag & drop your file here or click to upload</p>
-            <p className="text-muted">Supported formats: PDF, Word (.doc/.docx), PowerPoint (.ppt/.pptx)</p>
+    <div className="w-full max-w-2xl mx-auto mt-12 mb-20 animate-in fade-in slide-in-from-bottom-4 duration-500">
+      
+      {!file ? (
+        <div 
+          {...getRootProps()} 
+          className={`w-full bg-card border-2 border-dashed rounded-2xl p-12 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center min-h-[300px]
+            ${isDragActive ? 'border-brand-blue bg-brand-blue/5' : 'border-[#C7D0DC] hover:border-brand-blue hover:bg-brand-blue/5'}
+          `}
+        >
+          <input {...getInputProps()} />
+          
+          <UploadCloud className="w-12 h-12 text-brand-blue mb-4" />
+          <p className="font-display font-semibold text-lg text-text-primary">Drag & drop your file here</p>
+          <p className="font-body text-sm text-text-secondary mt-1">or click to browse</p>
+          
+          <div className="flex gap-2 mt-6">
+             <span className="bg-muted rounded-full px-3 py-1 text-xs font-mono text-text-secondary flex items-center gap-1">
+               📄 PDF
+             </span>
+             <span className="bg-muted rounded-full px-3 py-1 text-xs font-mono text-text-secondary flex items-center gap-1">
+               📝 DOCX
+             </span>
+             <span className="bg-muted rounded-full px-3 py-1 text-xs font-mono text-text-secondary flex items-center gap-1">
+               📊 PPTX
+             </span>
           </div>
-        ) : (
-          <div className="flex flex-col items-center text-center gap-4">
-            <File className="w-16 h-16 text-primary mb-2" />
-            <div>
-              <p className="text-xl font-semibold text-primary truncate max-w-[300px]">{file.name}</p>
-              <p className="text-muted">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
-            </div>
+          
+          <p className="text-xs text-[#9CA3AF] mt-4">Max 50MB</p>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4 animate-in slide-in-from-top-2 fade-in duration-300">
+          <div className="bg-muted rounded-xl px-4 py-3 flex items-center gap-3">
+             {getFileIcon(file.name)}
+             <div className="flex-grow min-w-0">
+               <p className="font-body text-sm font-medium text-text-primary truncate">{file.name}</p>
+               <p className="font-body text-xs text-text-secondary">{(file.size / 1024 / 1024).toFixed(2)} MB</p>
+             </div>
+             <button 
+               onClick={handleClear} 
+               disabled={isConverting}
+               className="p-1 hover:bg-black/5 rounded-md transition-colors text-text-secondary hover:text-text-primary disabled:opacity-50"
+             >
+               <X className="w-5 h-5" />
+             </button>
           </div>
-        )}
-      </div>
-
-      {error && (
-        <div className="text-red-500 font-medium bg-red-50 px-4 py-2 rounded-lg border border-red-200">
-          {error}
+          
+          <button
+            onClick={handleConvert}
+            disabled={isConverting}
+            className={`w-full py-3.5 rounded-xl font-body font-semibold text-base transition-all duration-200 flex justify-center items-center gap-2
+              ${isConverting 
+                ? 'bg-brand-blue/80 text-white cursor-not-allowed' 
+                : 'bg-brand-blue text-white hover:bg-brand-hover active:scale-[0.99] shadow-sm hover:shadow-md'
+              }
+            `}
+          >
+            {isConverting ? (
+              <>
+                <Loader2 className="w-5 h-5 animate-spin" />
+                Converting...
+              </>
+            ) : (
+              <>
+                Convert to Markdown <FileDown className="w-5 h-5" />
+              </>
+            )}
+          </button>
         </div>
       )}
 
-      <div className="flex items-center gap-4 w-full max-w-2xl">
-        <button
-          onClick={handleConvert}
-          disabled={!file || isConverting}
-          className={`flex-1 py-4 px-6 rounded-[16px] font-semibold text-lg transition-all duration-200 flex justify-center items-center gap-2
-            ${!file || isConverting 
-              ? 'bg-gray-100 text-gray-400 cursor-not-allowed' 
-              : 'bg-primary text-white hover:bg-gray-800 active:scale-[0.98]'
-            }
-          `}
-        >
-          {isConverting ? (
-            <>
-              <Loader2 className="w-6 h-6 animate-spin" />
-              Converting...
-            </>
-          ) : (
-            'Convert to Markdown'
-          )}
-        </button>
-
-        <button
-          onClick={handleClear}
-          disabled={!file || isConverting}
-          className={`py-4 px-6 rounded-[16px] font-semibold text-lg border border-border transition-all duration-200 flex justify-center items-center
-            ${!file || isConverting 
-              ? 'text-gray-400 border-gray-200 cursor-not-allowed' 
-              : 'text-primary bg-white hover:bg-gray-50 active:scale-[0.98]'
-            }
-          `}
-        >
-          <X className="w-6 h-6" />
-        </button>
-      </div>
+      {error && (
+        <div className="mt-4 text-red-600 font-body text-sm bg-red-50 px-4 py-3 rounded-xl border border-red-200 flex items-center gap-2">
+          <span className="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+          {error}
+        </div>
+      )}
     </div>
   );
 }
