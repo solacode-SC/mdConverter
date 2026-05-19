@@ -57,16 +57,24 @@ Simply drag and drop your file, convert, and instantly copy or download your for
 Make sure you have [Docker](https://www.docker.com/get-started) and [Make](https://www.gnu.org/software/make/) installed on your machine.
 
 ### Installation & Running
-Start the entire stack (Frontend + Backend) with a single command:
+Start the production stack (Frontend + Backend) with:
 
 ```bash
 make up
+```
+
+For local development with hot reload:
+
+```bash
+make dev
 ```
 
 Once the containers are running, the application will be available at:
 👉 **[http://localhost:3000](http://localhost:3000)**
 
 *(The backend API runs concurrently on [http://localhost:8000](http://localhost:8000))*
+
+You can configure the frontend API base URL by setting `NEXT_PUBLIC_API_URL`.
 
 ---
 
@@ -76,7 +84,10 @@ We provide a developer-friendly CLI wrapper. Just run these commands from the pr
 
 | Command | Description |
 |---|---|
-| `make up` | Starts all services in detached mode (builds if necessary). |
+| `make help` | Shows all available commands. |
+| `make dev` | Starts the development environment with hot reload. |
+| `make up` | Starts production in detached mode (builds if necessary). |
+| `make prod` | Alias for production startup. |
 | `make down` | Stops all running MD Converter containers. |
 | `make status` | Shows the active status of the containers. |
 | `make restart` | Restarts the containers without rebuilding. |
@@ -102,7 +113,8 @@ md-converter/
 │   │   └── main.py       # FastAPI entrypoint & router
 │   ├── requirements.txt
 │   └── Dockerfile
-├── docker-compose.yml    # Orchestrates frontend & backend networks/volumes
+├── docker-compose.yml    # Production compose
+├── docker-compose.dev.yml # Development compose
 └── Makefile              # Developer command shortcuts
 ```
 
