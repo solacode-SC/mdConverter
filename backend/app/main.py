@@ -16,14 +16,14 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-MAX_FILE_SIZE = 10 * 1024 * 1024  # 10MB
+MAX_FILE_SIZE = 2 * 1024 * 1024 * 1024  # 2GB
 
 @app.post("/convert")
 async def convert_file(file: UploadFile = File(...)):
     content = await file.read()
     
     if len(content) > MAX_FILE_SIZE:
-        raise HTTPException(status_code=413, detail="File too large. Maximum size is 10MB.")
+        raise HTTPException(status_code=413, detail="File too large. Maximum size is 2GB.")
         
     filename = file.filename.lower()
     

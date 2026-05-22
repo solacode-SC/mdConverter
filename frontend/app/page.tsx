@@ -65,7 +65,7 @@ export default function Home() {
                <span className="font-display font-extrabold text-[13px] text-brand-blue bg-brand-blue/10 rounded-full px-2.5 py-0.5 inline-block mb-4">01</span>
                <UploadCloud className="w-8 h-8 text-brand-blue mb-4" />
                <h3 className="font-body font-semibold text-base text-text-primary mb-2">Upload Your File</h3>
-               <p className="font-body text-sm text-text-secondary leading-relaxed">Drop a PDF, Word doc, or PowerPoint. We support all major document formats up to 50MB.</p>
+               <p className="font-body text-sm text-text-secondary leading-relaxed">Drop a PDF, Word doc, or PowerPoint. We support all major document formats up to 2GB.</p>
             </div>
             <div className="bg-card rounded-2xl p-6 shadow-card border border-border hover:shadow-md transition-shadow">
                <span className="font-display font-extrabold text-[13px] text-brand-blue bg-brand-blue/10 rounded-full px-2.5 py-0.5 inline-block mb-4">02</span>

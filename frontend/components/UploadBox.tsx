@@ -34,7 +34,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
       'application/octet-stream': ['.doc', '.docx', '.ppt', '.pptx']
     },
     maxFiles: 1,
-    maxSize: 50 * 1024 * 1024 // 50MB
+    maxSize: 2 * 1024 * 1024 * 1024 // 2GB
   });
 
   const handleClear = (e?: React.MouseEvent) => {
@@ -92,7 +92,7 @@ export default function UploadBox({ onSuccess }: UploadBoxProps) {
              </span>
           </div>
           
-          <p className="text-xs text-[#9CA3AF] mt-4">Max 50MB</p>
+          <p className="text-xs text-[#9CA3AF] mt-4">Max 2GB</p>
         </div>
       ) : (
         <div className="flex flex-col gap-4 animate-in slide-in-from-top-2 fade-in duration-300">
