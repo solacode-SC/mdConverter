@@ -6,10 +6,10 @@ services:
     container_name: md_converter_backend
     ports:
       - "8000:8000"
-    volumes:
-      - ./backend:/app
     environment:
       - PYTHONUNBUFFERED=1
+    command: ["uvicorn", "app.main:app", "--host", "0.0.0.0", "--port", "8000"]
+    restart: always
     networks:
       - md_network
 
@@ -18,12 +18,11 @@ services:
     container_name: md_converter_frontend
     ports:
       - "3000:3000"
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-      - /app/.next
     environment:
-      - NEXT_PUBLIC_API_URL=http://localhost:8000
+      - NODE_ENV=production
+      - NEXT_PUBLIC_API_URL=${NEXT_PUBLIC_API_URL:-http://localhost:8000}
+    command: sh -c "npm run build && npm run start"
+    restart: always
     networks:
       - md_network
     depends_on:
@@ -31,4 +30,5 @@ services:
 
 networks:
   md_network:
+    name: md_network
     driver: bridge

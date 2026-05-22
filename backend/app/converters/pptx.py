@@ -1,8 +1,7 @@
 from pptx import Presentation
-import io
 
-def convert_pptx(content: bytes) -> str:
-    prs = Presentation(io.BytesIO(content))
+def convert_pptx(file_path: str) -> str:
+    prs = Presentation(file_path)
     markdown_lines = []
     
     for i, slide in enumerate(prs.slides):

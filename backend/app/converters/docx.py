@@ -1,6 +1,6 @@
 import mammoth
-import io
 
-def convert_docx(content: bytes) -> str:
-    result = mammoth.convert_to_markdown(io.BytesIO(content))
-    return result.value
+def convert_docx(file_path: str) -> str:
+    with open(file_path, "rb") as docx_file:
+        result = mammoth.convert_to_markdown(docx_file)
+        return result.value

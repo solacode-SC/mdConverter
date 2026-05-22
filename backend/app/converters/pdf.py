@@ -1,7 +1,7 @@
 import fitz  # PyMuPDF
 
-def convert_pdf(content: bytes) -> str:
-    doc = fitz.open(stream=content, filetype="pdf")
+def convert_pdf(file_path: str) -> str:
+    doc = fitz.open(file_path)
     markdown_lines = []
     
     for page_num in range(len(doc)):
